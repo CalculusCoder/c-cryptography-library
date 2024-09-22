@@ -1,0 +1,9 @@
+# ninja log v6
+0	36	1726896438251243213	CMakeFiles/crypto.dir/crypto.c.o	423f58e3e4f5d66f
+0	14	1726975724205410805	build.ninja	dfbf16937e9b4fed
+36	57	1726896438287241953	libcrypto.so	103dfa2c44f9974f
+31	53	1726941796032955286	cryptography_library	1fdccd4f1c09499c
+1	31	1726941796002955396	CMakeFiles/cryptography_library.dir/main.c.o	87d3d937c5294d92
+0	33	1726897320054970742	CMakeFiles/cryptography_library.dir/crypto.c.o	91ec7e5f51dec20f
+0	30	1726975997345346265	CMakeFiles/cryptography_library.dir/main.c.o	87d3d937c5294d92
+30	44	1726975997375346123	cryptography_library	1fdccd4f1c09499c
