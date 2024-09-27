@@ -1,81 +1,12 @@
+//
+// Created by jared on 9/23/24.
+//
+
 #include <ctype.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-int read_file(const char *, const char *, int, const char*);
-int caesar_encrypt(char*, const char *, int);
-int caesar_decrypt(char*, const char *, int);
-
-int main(int argc, char *argv[])
-{
-    if (argc < 5) {
-        printf("Argument count error");
-        return 1;
-    }
-
-    const char *file_path = argv[1];
-    const char *output_file_path = argv[2];
-    const int encryption_decryption_key = atoi(argv[3]);
-    const char* encrypt = argv[4];
-
-    read_file(file_path, output_file_path, encryption_decryption_key, encrypt);
-
-    return 0;
-}
-
-
-
-int read_file(const char *file_path, const char *output_file_path, int encryption_decryption_key, const char* encrypt) {
-    FILE *fptr = fopen(file_path, "r");
-    if (fptr == NULL) {
-        printf("Unable to open file");
-        return 1;
-    }
-
-    fseek(fptr, 0, SEEK_END);
-    long size = ftell(fptr);
-    fseek(fptr, 0, SEEK_SET);
-
-    char *file_content = malloc((size + 1) *sizeof(char));
-
-    if (file_content == NULL) {
-        printf("Memory allocation failure");
-        fclose(fptr);
-        return 1;
-    }
-
-
-
-
-    char *message = malloc((size + 1) *sizeof(char));
-    if (message == NULL) {
-        printf("Memory allocation failure");
-        return 1;
-    }
-
-    //read every line and store it in the message variable.
-    while (fgets(file_content, size + 1, fptr)) {
-        strcat(message, file_content);
-    }
-
-    file_content[size] = '\0';
-
-    if (strcmp(encrypt, "true") == 0) {
-        caesar_encrypt(message, output_file_path, encryption_decryption_key);
-    } else {
-        caesar_decrypt(message, output_file_path, encryption_decryption_key);
-    }
-
-    fclose(fptr);
-    free(file_content);
-    free(message);
-    message = NULL;
-    file_content = NULL;
-
-    return 0;
-}
 
 
 
@@ -91,7 +22,7 @@ int caesar_encrypt(char *message, const char* output_file_path, int encryption_s
         return 1;
     }
 
-
+    //can be refactored to run in o(n) time using a lookup table
     for(int i = 0; i < messageLength; i++) {
         encrypted_message[i] = message[i];
 
@@ -125,6 +56,14 @@ int caesar_encrypt(char *message, const char* output_file_path, int encryption_s
     }
 
     fprintf(fptr, encrypted_message);
+    if (ferror(fptr)) {
+        printf("Error writing to file\n");
+        fclose(fptr);
+        free(encrypted_message);
+        encrypted_message = NULL;
+        return 1;
+    }
+
     fclose(fptr);
 
     free(encrypted_message);
