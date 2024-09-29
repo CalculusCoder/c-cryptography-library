@@ -56,6 +56,24 @@ int columnar_cipher_encrypt(char*message, char* output_file_path, char* encrypti
     int letter_index[key_length];
     int messageLength = strlen(message);
 
+
+    char* new_message = malloc((messageLength + 1) * sizeof(char));
+    if (new_message == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    int j = 0;
+    for (int i = 0; i < messageLength; i++) {
+        if (message[i] != '\n' && message[i] != '\r') {
+            new_message[j] = message[i];
+            j++;
+        }
+    }
+
+    new_message[j] = '\0';
+
+
     for (int i = 0; i < 26; i++) {
         alphabet_lookup[i] = i;
     }
@@ -79,7 +97,7 @@ int columnar_cipher_encrypt(char*message, char* output_file_path, char* encrypti
 
     for (int start = 0; start < messageLength;) {
 
-        append_letter(kv, current_kv_index, message[start]);
+        append_letter(kv, current_kv_index, new_message[start]);
 
         if (start + key_length >= messageLength) {
             current_index++;
@@ -100,14 +118,19 @@ int columnar_cipher_encrypt(char*message, char* output_file_path, char* encrypti
     char encrypted_message[messageLength + 1];
     encrypted_message[0] = '\0';
 
+
+
     for (int i = 0; i < number_of_keys; i++) {
         strcat(encrypted_message, kv[i].value);
     }
+
+    printf("Encrypted message: %s", encrypted_message);
 
     FILE *fptr = fopen(output_file_path, "w");
     if (fptr == NULL) {
         printf("Error opening file for writing\n");
         free(kv);
+        free(new_message);
         return 1;
     }
 
@@ -117,6 +140,7 @@ int columnar_cipher_encrypt(char*message, char* output_file_path, char* encrypti
         printf("Error writing to file\n");
         fclose(fptr);
         free(kv);
+        free(new_message);
         return 1;
     }
 
@@ -134,17 +158,34 @@ int columnar_cipher_encrypt(char*message, char* output_file_path, char* encrypti
 
 
     free(kv);
+    free(new_message);
     return 0;
 }
 
 
-//same thing as columnar encrypt.
+
 int columnar_cipher_decrypt(char*message, char* output_file_path, char* encryption_decryption_key) {
 
     int alphabet_lookup[26];
     int key_length = strlen(encryption_decryption_key);
     int letter_index[key_length];
     int messageLength = strlen(message);
+
+    char* new_message = malloc((messageLength + 1) * sizeof(char));
+    if (new_message == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    int j = 0;
+    for (int i = 0; i < messageLength; i++) {
+        if (message[i] != '\n' && message[i] != '\r') {
+            new_message[j] = message[i];
+            j++;
+        }
+    }
+
+    new_message[j] = '\0';
 
     for (int i = 0; i < 26; i++) {
         alphabet_lookup[i] = i;
@@ -165,8 +206,6 @@ int columnar_cipher_decrypt(char*message, char* output_file_path, char* encrypti
     }
 
 
-
-
     // qsort(kv, number_of_keys, sizeof(struct key_value), compare);
 
     int visited[key_length];  // Array to track visited keys
@@ -185,11 +224,9 @@ int columnar_cipher_decrypt(char*message, char* output_file_path, char* encrypti
 
         if (remainder >= lowest + 1) {
             result+=1; //has result + 1 rows
-            printf("result, row is longer: %d\n", result);
 
             for (int j = 0; j < result && current_kv_index < messageLength; j++) {
-                append_letter(kv, lowest, message[current_kv_index]);
-                printf("Letter appended, row is longer: %c, Index: %d\n", message[current_kv_index], lowest);
+                append_letter(kv, lowest, new_message[current_kv_index]);
                 current_kv_index++;
             }
 
@@ -197,10 +234,8 @@ int columnar_cipher_decrypt(char*message, char* output_file_path, char* encrypti
 
             visited[lowest] = 1;
         } else { //has result rows
-            printf("result, row is shorter: %d\n", result);
             for (int j = 0; j < result && current_kv_index < messageLength; j++) {
-                append_letter(kv, lowest, message[current_kv_index]);
-                printf("Letter appended:, row is shorter %c, Index: %d\n", message[current_kv_index], lowest);
+                append_letter(kv, lowest, new_message[current_kv_index]);
                 current_kv_index++;
             }
 
@@ -210,18 +245,30 @@ int columnar_cipher_decrypt(char*message, char* output_file_path, char* encrypti
 
     }
 
-    printf("Key: %d. Value: %s\n", kv[0].key, kv[0].value);
-    printf("Key: %d. Value: %s\n", kv[1].key, kv[1].value);
-    printf("Key: %d. Value: %s\n", kv[2].key, kv[2].value);
-    printf("Key: %d. Value: %s\n", kv[3].key, kv[3].value);
-
+    int decrypted_message_length = 0;
 
     char decrypted_message[messageLength + 1];
     decrypted_message[0] = '\0';
 
-    for (int i = 0; i < number_of_keys; i++) {
-        strcat(decrypted_message, kv[i].value);
+
+    int value_letter_index = 0;
+
+    for (int i = 0; decrypted_message_length < messageLength;) {
+        decrypted_message[decrypted_message_length] = kv[i].value[value_letter_index];
+
+        decrypted_message_length++;
+
+        if (i + 1 == key_length) {
+            value_letter_index++;
+            i = 0;
+
+        } else {
+            i++;
+        }
+
     }
+
+    decrypted_message[messageLength] = '\0';
 
 
 
@@ -229,6 +276,7 @@ int columnar_cipher_decrypt(char*message, char* output_file_path, char* encrypti
     if (fptr == NULL) {
         printf("Error opening file for writing\n");
         free(kv);
+        free(new_message);
         return 1;
     }
 
@@ -238,6 +286,7 @@ int columnar_cipher_decrypt(char*message, char* output_file_path, char* encrypti
         printf("Error writing to file\n");
         fclose(fptr);
         free(kv);
+        free(new_message);
         return 1;
     }
 
@@ -253,5 +302,6 @@ int columnar_cipher_decrypt(char*message, char* output_file_path, char* encrypti
 
 
     free(kv);
+    free(new_message);
     return 0;
 }
