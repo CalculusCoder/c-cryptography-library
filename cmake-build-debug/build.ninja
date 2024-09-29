@@ -73,6 +73,12 @@ build CMakeFiles/cryptography_library.dir/src/columnar_cipher/columnar_cipher.c.
   OBJECT_DIR = CMakeFiles/cryptography_library.dir
   OBJECT_FILE_DIR = CMakeFiles/cryptography_library.dir/src/columnar_cipher
 
+build CMakeFiles/cryptography_library.dir/src/diffie_hellman/diffie_hellman.c.o: C_COMPILER__cryptography_library_unscanned_Debug /home/jared/Projects/C/cryptography-library/src/diffie_hellman/diffie_hellman.c || cmake_object_order_depends_target_cryptography_library
+  DEP_FILE = CMakeFiles/cryptography_library.dir/src/diffie_hellman/diffie_hellman.c.o.d
+  FLAGS = -g -std=gnu11 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles/cryptography_library.dir
+  OBJECT_FILE_DIR = CMakeFiles/cryptography_library.dir/src/diffie_hellman
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target cryptography_library
@@ -81,7 +87,7 @@ build CMakeFiles/cryptography_library.dir/src/columnar_cipher/columnar_cipher.c.
 #############################################
 # Link the executable cryptography_library
 
-build cryptography_library: C_EXECUTABLE_LINKER__cryptography_library_Debug CMakeFiles/cryptography_library.dir/src/main.c.o CMakeFiles/cryptography_library.dir/src/caesar_cipher/caesar_cipher.c.o CMakeFiles/cryptography_library.dir/src/utils/file_utils.c.o CMakeFiles/cryptography_library.dir/src/columnar_cipher/columnar_cipher.c.o
+build cryptography_library: C_EXECUTABLE_LINKER__cryptography_library_Debug CMakeFiles/cryptography_library.dir/src/main.c.o CMakeFiles/cryptography_library.dir/src/caesar_cipher/caesar_cipher.c.o CMakeFiles/cryptography_library.dir/src/utils/file_utils.c.o CMakeFiles/cryptography_library.dir/src/columnar_cipher/columnar_cipher.c.o CMakeFiles/cryptography_library.dir/src/diffie_hellman/diffie_hellman.c.o
   FLAGS = -g
   OBJECT_DIR = CMakeFiles/cryptography_library.dir
   POST_BUILD = :

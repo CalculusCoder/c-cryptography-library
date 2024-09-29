@@ -11,5 +11,7 @@ add_executable(cryptography_library src/main.c
         src/utils/file_utils.c
         src/utils/file_utils.h
         src/columnar_cipher/columnar_cipher.h
-        src/columnar_cipher/columnar_cipher.c)
+        src/columnar_cipher/columnar_cipher.c
+        src/diffie_hellman/diffie_hellman.c
+        src/diffie_hellman/diffie_hellman.h)
 
